@@ -1,15 +1,12 @@
-AGENTIC USAGE MONITOR v1.4
+AGENTIC USAGE MONITOR v1.5
 
-FIXES
-- Login and dashboard views are now explicitly isolated using CSS classes.
-- Only the login screen is shown while signed out.
-- Only the dashboard is shown after Firebase confirms authentication.
-- Firebase listeners are unsubscribed when authentication state changes.
+NEW:
+- Privacy Mode button in the dashboard header.
+- Privacy Mode blurs all monitored email addresses and the signed-in email.
+- Recent Activity is completely hidden while Privacy Mode is enabled.
+- Privacy preference is saved locally and persists after refresh.
+- Reset Period options are now: 1 week, 1 month, or Custom range.
+- Custom range supports any number of days, weeks, or months.
+- Existing v1.4 records remain compatible and default to a 1-week reset cycle.
 
-NEW
-- Added a free-text "Agentic / service name" field.
-- You can enter any current or future service name, such as Codex, Antigravity, Replit, etc.
-- Service name is stored with each account in Firebase and displayed as a compact tag.
-- Existing v1.3 records remain compatible and display "Unspecified" until edited.
-
-Firebase configuration and database structure remain compatible with v1.3.
+Firebase configuration and rules remain compatible with previous versions.
