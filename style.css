@@ -17,3 +17,11 @@ body:has(#auth:not(.is-hidden)) { overflow: hidden; }
   body:has(#auth:not(.is-hidden)) main { padding-top: 12px; padding-bottom: 12px; }
   .auth { min-height: calc(100dvh - 24px); height: calc(100dvh - 24px); }
 }
+
+/* v1.7 Search & Filters */
+.filterBar{display:grid;grid-template-columns:minmax(220px,1fr) 150px 190px;gap:8px;margin-bottom:7px}
+.filterBar input,.filterBar select{width:100%;height:39px;padding:0 11px;border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--text);font:inherit;font-size:12px}
+.filterBar input:focus,.filterBar select:focus{outline:2px solid rgba(37,99,235,.18);border-color:var(--primary)}
+.filterCount{min-height:16px;margin:0 2px 6px;color:var(--muted);font-size:10px}
+.emptyFiltered{padding:28px;text-align:center;background:var(--surface);border:1px dashed var(--border);border-radius:13px;color:var(--muted);font-size:13px}
+@media(max-width:650px){.filterBar{grid-template-columns:1fr 1fr}.filterBar input{grid-column:1/-1}}

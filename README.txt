@@ -1,9 +1,10 @@
-AGENTIC USAGE MONITOR v1.6
+AGENTIC USAGE MONITOR v1.7
 
-QUICK FIX:
-- Fixed the login/landing page height to prevent unnecessary vertical scrolling.
-- Landing card remains centered within the visible browser viewport.
-- Added "by qCode Systems" directly below the Agentic Usage Monitor dashboard title.
-- Branding text uses a small, subtle grey style.
-
-All v1.5 Firebase, authentication, privacy mode, theme, reset periods, custom ranges and data compatibility are retained.
+NEW
+- Search bar for email addresses and agentic app/service names.
+- Status filter: All Status, Ready, Cooldown.
+- Dynamic Agentic App filter generated from saved app names such as Codex, Antigravity, Replit, and any future custom names.
+- Search and filters can be combined.
+- Removed unnecessary 0d from countdown display.
+- Shows matching account count while filtering.
+- All v1.6 features retained.
