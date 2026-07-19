@@ -1,12 +1,9 @@
-AGENTIC USAGE MONITOR v1.5
+AGENTIC USAGE MONITOR v1.6
 
-NEW:
-- Privacy Mode button in the dashboard header.
-- Privacy Mode blurs all monitored email addresses and the signed-in email.
-- Recent Activity is completely hidden while Privacy Mode is enabled.
-- Privacy preference is saved locally and persists after refresh.
-- Reset Period options are now: 1 week, 1 month, or Custom range.
-- Custom range supports any number of days, weeks, or months.
-- Existing v1.4 records remain compatible and default to a 1-week reset cycle.
+QUICK FIX:
+- Fixed the login/landing page height to prevent unnecessary vertical scrolling.
+- Landing card remains centered within the visible browser viewport.
+- Added "by qCode Systems" directly below the Agentic Usage Monitor dashboard title.
+- Branding text uses a small, subtle grey style.
 
-Firebase configuration and rules remain compatible with previous versions.
+All v1.5 Firebase, authentication, privacy mode, theme, reset periods, custom ranges and data compatibility are retained.
