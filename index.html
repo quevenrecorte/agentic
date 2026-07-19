@@ -1,9 +1,14 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gmail Reset Monitor v1.2</title><link rel="stylesheet" href="style.css"></head><body>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Agentic Usage Monitor v1.4</title><link rel="stylesheet" href="style.css"></head><body>
 <main>
-<section id="auth"><div class="box"><h1>Gmail Reset Monitor</h1><p>Sign in to sync your monitoring data.</p><form id="loginForm"><input id="loginEmail" type="email" placeholder="Email" required><input id="loginPassword" type="password" placeholder="Password" minlength="6" required><p id="msg"></p><button>Sign In</button><button type="button" id="register" class="light">Create Account</button></form></div></section>
-<section id="dashboard" hidden><header><div><small>AGENTIC APP · V1.2</small><h1>Gmail Reset Monitor</h1><p id="user"></p></div><div><button id="add">+ Add Gmail</button><button id="logout" class="light">Sign Out</button></div></header>
-<div class="stats"><div><b id="total">0</b><span>Accounts</span></div><div><b id="waiting">0</b><span>Waiting</span></div><div><b id="ready">0</b><span>Ready</span></div></div>
-<div id="list"></div><section class="activity"><h2>Recent Activity</h2><div id="activity"></div></section></section>
+<section id="auth" class="view auth"><div class="authbox"><div class="brand">A</div><small>AGENTIC APP</small><h1>Usage Monitor</h1><p>Sign in to sync your account usage cycles.</p><form id="loginForm"><input id="loginEmail" type="email" placeholder="Email" required><input id="loginPassword" type="password" placeholder="Password" minlength="6" required><p id="msg"></p><button>Sign In</button><button type="button" id="register" class="secondary wide">Create Account</button></form></div></section>
+<section id="dashboard" class="view dashboard is-hidden"><header><div><small>AGENTIC APP · V1.4</small><h1>Agentic Usage Monitor</h1><p id="user"></p></div><div class="headerBtns"><button id="theme" class="icon secondary" title="Toggle theme">☾</button><button id="add">+ Add Account</button><button id="logout" class="secondary">Sign Out</button></div></header>
+<div class="stats"><div><b id="total">0</b><span>Accounts</span></div><div><b id="waiting">0</b><span>In cooldown</span></div><div><b id="ready">0</b><span>Available</span></div></div>
+<div id="list" class="list"></div><section class="activity"><div class="activityHead"><h2>Recent Activity</h2><span>Latest 20 events</span></div><div id="activity"></div></section></section>
 </main>
-<dialog id="modal"><form id="accountForm"><h2 id="modalTitle">Add Gmail</h2><input id="editId" type="hidden"><label>Gmail<input id="email" type="email" required></label><label>Limit fully used<input id="limitDate" type="datetime-local" required></label><label>Reset period<select id="days"><option value="7">7 days</option><option value="5">5 days</option><option value="3">3 days</option><option value="1">1 day</option></select></label><div class="actions"><button type="button" id="cancel" class="light">Cancel</button><button>Save</button></div></form></dialog>
+<dialog id="modal"><form id="accountForm"><div class="modalHead"><h2 id="modalTitle">Add Account</h2><button type="button" id="x" class="close">×</button></div><input id="editId" type="hidden">
+<label>Email account<input id="email" type="email" required></label>
+<label>Agentic / service name<input id="agenticName" type="text" placeholder="e.g. Codex, Antigravity, Replit" maxlength="80" required></label>
+<label>Limit last reached<input id="limitDate" type="datetime-local" required></label>
+<label>Reset period<select id="days"><option value="7">7 days</option><option value="5">5 days</option><option value="3">3 days</option><option value="1">1 day</option></select></label>
+<div class="actions"><button type="button" id="cancel" class="secondary">Cancel</button><button>Save</button></div></form></dialog>
 <script type="module" src="app.js"></script></body></html>

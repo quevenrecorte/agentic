@@ -1,11 +1,15 @@
-Gmail Reset Monitor v1.2
+AGENTIC USAGE MONITOR v1.4
 
-1. Firebase Console > Authentication > Sign-in method > enable Email/Password.
-2. Firebase Console > Realtime Database > Rules > paste database.rules.json and Publish.
-3. Upload index.html, style.css and app.js to your host.
-4. If needed, add your GitHub Pages domain under Authentication > Settings > Authorized domains.
+FIXES
+- Login and dashboard views are now explicitly isolated using CSS classes.
+- Only the login screen is shown while signed out.
+- Only the dashboard is shown after Firebase confirms authentication.
+- Firebase listeners are unsubscribed when authentication state changes.
 
-Data is stored under users/{Firebase Auth UID}/accounts and users/{Firebase Auth UID}/activity.
-The included database rules prevent one authenticated user from reading another user's data.
+NEW
+- Added a free-text "Agentic / service name" field.
+- You can enter any current or future service name, such as Codex, Antigravity, Replit, etc.
+- Service name is stored with each account in Firebase and displayed as a compact tag.
+- Existing v1.3 records remain compatible and display "Unspecified" until edited.
 
-Note: Firebase web configuration/API keys are normally included in frontend apps. Protect your data with Authentication and Security Rules; do not use open public database rules.
+Firebase configuration and database structure remain compatible with v1.3.
