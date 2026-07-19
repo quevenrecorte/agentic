@@ -1,76 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gmail Weekly Reset Monitor</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <main class="app">
-    <header class="header">
-      <div>
-        <p class="eyebrow">Agentic App</p>
-        <h1>Gmail Reset Monitor</h1>
-        <p class="subtitle">Track weekly limits and see when each account is ready again.</p>
-      </div>
-      <button id="addBtn" class="primary">+ Add Gmail</button>
-    </header>
-
-    <section class="stats">
-      <div class="stat"><span id="totalCount">0</span><small>Accounts</small></div>
-      <div class="stat"><span id="limitedCount">0</span><small>Waiting</small></div>
-      <div class="stat"><span id="readyCount">0</span><small>Ready</small></div>
-    </section>
-
-    <section id="emptyState" class="empty">
-      <div class="empty-icon">⏱️</div>
-      <h2>No Gmail accounts yet</h2>
-      <p>Add an account and the date/time its limit was fully used.</p>
-      <button id="emptyAddBtn" class="primary">Add your first Gmail</button>
-    </section>
-
-    <section id="accountList" class="account-list"></section>
-  </main>
-
-  <dialog id="accountDialog">
-    <form id="accountForm" method="dialog">
-      <div class="modal-head">
-        <h2 id="modalTitle">Add Gmail</h2>
-        <button type="button" id="closeBtn" class="icon-btn">×</button>
-      </div>
-
-      <input type="hidden" id="editId">
-
-      <label>
-        Gmail account
-        <input id="email" type="email" placeholder="example@gmail.com" required>
-      </label>
-
-      <label>
-        Limit fully used
-        <input id="limitDate" type="datetime-local" required>
-      </label>
-
-      <label>
-        Reset period
-        <select id="resetDays">
-          <option value="7">7 days</option>
-          <option value="5">5 days</option>
-          <option value="3">3 days</option>
-          <option value="1">1 day</option>
-        </select>
-      </label>
-
-      <p class="hint">Expected reset is calculated from the time the limit was fully used.</p>
-
-      <div class="modal-actions">
-        <button type="button" id="cancelBtn" class="secondary">Cancel</button>
-        <button type="submit" class="primary">Save Account</button>
-      </div>
-    </form>
-  </dialog>
-
-  <script src="app.js"></script>
-</body>
-</html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gmail Reset Monitor v1.2</title><link rel="stylesheet" href="style.css"></head><body>
+<main>
+<section id="auth"><div class="box"><h1>Gmail Reset Monitor</h1><p>Sign in to sync your monitoring data.</p><form id="loginForm"><input id="loginEmail" type="email" placeholder="Email" required><input id="loginPassword" type="password" placeholder="Password" minlength="6" required><p id="msg"></p><button>Sign In</button><button type="button" id="register" class="light">Create Account</button></form></div></section>
+<section id="dashboard" hidden><header><div><small>AGENTIC APP · V1.2</small><h1>Gmail Reset Monitor</h1><p id="user"></p></div><div><button id="add">+ Add Gmail</button><button id="logout" class="light">Sign Out</button></div></header>
+<div class="stats"><div><b id="total">0</b><span>Accounts</span></div><div><b id="waiting">0</b><span>Waiting</span></div><div><b id="ready">0</b><span>Ready</span></div></div>
+<div id="list"></div><section class="activity"><h2>Recent Activity</h2><div id="activity"></div></section></section>
+</main>
+<dialog id="modal"><form id="accountForm"><h2 id="modalTitle">Add Gmail</h2><input id="editId" type="hidden"><label>Gmail<input id="email" type="email" required></label><label>Limit fully used<input id="limitDate" type="datetime-local" required></label><label>Reset period<select id="days"><option value="7">7 days</option><option value="5">5 days</option><option value="3">3 days</option><option value="1">1 day</option></select></label><div class="actions"><button type="button" id="cancel" class="light">Cancel</button><button>Save</button></div></form></dialog>
+<script type="module" src="app.js"></script></body></html>
