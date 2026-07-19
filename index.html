@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gmail Weekly Reset Monitor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div>
+        <p class="eyebrow">Agentic App</p>
+        <h1>Gmail Reset Monitor</h1>
+        <p class="subtitle">Track weekly limits and see when each account is ready again.</p>
+      </div>
+      <button id="addBtn" class="primary">+ Add Gmail</button>
+    </header>
+
+    <section class="stats">
+      <div class="stat"><span id="totalCount">0</span><small>Accounts</small></div>
+      <div class="stat"><span id="limitedCount">0</span><small>Waiting</small></div>
+      <div class="stat"><span id="readyCount">0</span><small>Ready</small></div>
+    </section>
+
+    <section id="emptyState" class="empty">
+      <div class="empty-icon">⏱️</div>
+      <h2>No Gmail accounts yet</h2>
+      <p>Add an account and the date/time its limit was fully used.</p>
+      <button id="emptyAddBtn" class="primary">Add your first Gmail</button>
+    </section>
+
+    <section id="accountList" class="account-list"></section>
+  </main>
+
+  <dialog id="accountDialog">
+    <form id="accountForm" method="dialog">
+      <div class="modal-head">
+        <h2 id="modalTitle">Add Gmail</h2>
+        <button type="button" id="closeBtn" class="icon-btn">×</button>
+      </div>
+
+      <input type="hidden" id="editId">
+
+      <label>
+        Gmail account
+        <input id="email" type="email" placeholder="example@gmail.com" required>
+      </label>
+
+      <label>
+        Limit fully used
+        <input id="limitDate" type="datetime-local" required>
+      </label>
+
+      <label>
+        Reset period
+        <select id="resetDays">
+          <option value="7">7 days</option>
+          <option value="5">5 days</option>
+          <option value="3">3 days</option>
+          <option value="1">1 day</option>
+        </select>
+      </label>
+
+      <p class="hint">Expected reset is calculated from the time the limit was fully used.</p>
+
+      <div class="modal-actions">
+        <button type="button" id="cancelBtn" class="secondary">Cancel</button>
+        <button type="submit" class="primary">Save Account</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
