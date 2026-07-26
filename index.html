@@ -1,20 +1,370 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Agentic Usage Monitor v1.7</title><link rel="stylesheet" href="style.css"></head><body><main>
-<section id="auth" class="view auth"><div class="authbox"><div class="brand">A</div><small>AGENTIC APP</small><h1>Usage Monitor</h1><p>Sign in to sync your account usage cycles.</p><form id="loginForm"><input id="loginEmail" type="email" placeholder="Email" required><input id="loginPassword" type="password" placeholder="Password" minlength="6" required><p id="msg"></p><button>Sign In</button><button type="button" id="register" class="secondary">Create Account</button></form></div></section>
-<section id="dashboard" class="view dashboard is-hidden"><header><div><small>AGENTIC APP · V1.7</small><h1>Agentic Usage Monitor</h1><div class="qcode">by qCode Systems</div><p id="user"></p></div><div class="headerBtns"><button id="privacy" class="icon secondary" title="Privacy mode">◉</button><button id="theme" class="icon secondary" title="Toggle theme">☾</button><button id="add">+ Add Account</button><button id="logout" class="secondary">Sign Out</button></div></header>
-<div class="stats"><div><b id="total">0</b><span>Accounts</span></div><div><b id="waiting">0</b><span>In cooldown</span></div><div><b id="ready">0</b><span>Available</span></div></div><section class="filterBar">
-<input id="search" type="search" placeholder="Search email or agentic app...">
-<select id="statusFilter">
-<option value="all">All status</option>
-<option value="ready">Ready</option>
-<option value="cooldown">Cooldown</option>
-</select>
-<select id="appFilter"><option value="all">All agentic apps</option></select>
-</section>
-<div id="filterCount" class="filterCount"></div>
-<div id="list" class="list"></div>
-<section id="activitySection" class="activity"><div class="activityHead"><h2>Recent Activity</h2><span>Latest 20 events</span></div><div id="activity"></div></section></section></main>
-<dialog id="modal"><form id="accountForm"><div class="modalHead"><h2 id="modalTitle">Add Account</h2><button type="button" id="x" class="close">×</button></div><input id="editId" type="hidden">
-<label>Email account<input id="email" type="email" required></label><label>Agentic / service name<input id="agenticName" type="text" placeholder="e.g. Codex, Antigravity, Replit" maxlength="80" required></label><label>Limit last reached<input id="limitDate" type="datetime-local" required></label>
-<label>Reset period<select id="period"><option value="week">1 week</option><option value="month">1 month</option><option value="custom">Custom range</option></select></label>
-<div id="customWrap" class="customWrap is-hidden"><label>Custom duration<div class="customRow"><input id="customValue" type="number" min="1" value="1"><select id="customUnit"><option value="days">Days</option><option value="weeks">Weeks</option><option value="months">Months</option></select></div></label></div>
-<div class="actions"><button type="button" id="cancel" class="secondary">Cancel</button><button>Save</button></div></form></dialog><script type="module" src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Agentic Usage Monitor v2.0</title>
+  <meta name="description" content="Personal monitor for agentic AI tool usage cycles and email security status.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+
+  <!-- ═══════════════════ AUTH ═══════════════════ -->
+  <section id="auth" class="view auth">
+    <div class="authbox">
+      <div class="brand-lockup">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-label">AGENTIC</span>
+          <span class="brand-sub">Usage Monitor</span>
+        </div>
+      </div>
+      <h1>Welcome back</h1>
+      <p>Sign in to sync your usage cycles and security status.</p>
+      <form id="loginForm">
+        <div class="field-group">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="email" placeholder="you@example.com" required>
+        </div>
+        <div class="field-group">
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" placeholder="••••••••" minlength="6" required>
+        </div>
+        <p id="msg" class="msg-error"></p>
+        <button id="signInBtn" type="submit">Sign In</button>
+        <button type="button" id="register" class="secondary">Create Account</button>
+      </form>
+      <p class="auth-footer">by <span class="mono">qCode Systems</span> · v2.0</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ DASHBOARD ═══════════════════ -->
+  <section id="dashboard" class="view dashboard is-hidden">
+
+    <!-- Header -->
+    <header>
+      <div class="header-brand">
+        <div class="brand-icon sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div>
+          <div class="header-title">Agentic <span class="mono accent">Monitor</span></div>
+          <div class="header-sub">v2.0 · <span id="user" class="header-user"></span></div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="privacy" class="icon-btn" title="Toggle privacy mode" aria-label="Privacy mode">
+          <svg id="privacyIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <button id="theme" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">
+          <svg id="themeIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button id="logout" class="btn-ghost">Sign Out</button>
+      </div>
+    </header>
+
+    <!-- Stats Row -->
+    <div class="stats-grid">
+      <div class="stat-card" id="statTotal">
+        <div class="stat-icon accounts">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="stat-body">
+          <b id="total">0</b>
+          <span>Total accounts</span>
+        </div>
+      </div>
+      <div class="stat-card" id="statReady">
+        <div class="stat-icon ready">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="stat-body">
+          <b id="ready">0</b>
+          <span>Available</span>
+        </div>
+      </div>
+      <div class="stat-card" id="statWait">
+        <div class="stat-icon wait">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="stat-body">
+          <b id="waiting">0</b>
+          <span>In cooldown</span>
+        </div>
+      </div>
+      <div class="stat-card" id="statSecurity">
+        <div class="stat-icon security">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="stat-body">
+          <b id="secured">0</b>
+          <span>Emails secured</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav" role="tablist">
+      <button class="tab active" data-tab="agentic" role="tab" aria-selected="true" id="tab-agentic">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Agentic Accounts
+        <span class="tab-count" id="tabCountAgentic">0</span>
+      </button>
+      <button class="tab" data-tab="email" role="tab" aria-selected="false" id="tab-email">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Email Security
+        <span class="tab-count" id="tabCountEmail">0</span>
+      </button>
+    </nav>
+
+    <!-- ─── AGENTIC TAB ─── -->
+    <div id="pane-agentic" class="tab-pane active">
+      <div class="pane-toolbar">
+        <div class="filter-bar">
+          <div class="search-wrap">
+            <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="search" type="search" placeholder="Search email or service…">
+          </div>
+          <select id="statusFilter">
+            <option value="all">All status</option>
+            <option value="ready">Ready</option>
+            <option value="cooldown">Cooldown</option>
+          </select>
+          <select id="appFilter"><option value="all">All services</option></select>
+        </div>
+        <button id="add" class="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Account
+        </button>
+      </div>
+      <div id="filterCount" class="filter-count"></div>
+      <div id="list" class="card-list"></div>
+    </div>
+
+    <!-- ─── EMAIL SECURITY TAB ─── -->
+    <div id="pane-email" class="tab-pane">
+      <div class="pane-toolbar">
+        <div class="filter-bar">
+          <div class="search-wrap">
+            <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="emailSearch" type="search" placeholder="Search email address…">
+          </div>
+          <select id="emailSecFilter">
+            <option value="all">All status</option>
+            <option value="secured">Fully secured</option>
+            <option value="partial">Partially secured</option>
+            <option value="none">No 2FA</option>
+          </select>
+        </div>
+        <button id="addEmail" class="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Email
+        </button>
+      </div>
+      <div id="emailFilterCount" class="filter-count"></div>
+      <div id="emailList" class="card-list"></div>
+    </div>
+
+    <!-- Activity Log -->
+    <section id="activitySection" class="activity-section">
+      <div class="activity-header">
+        <div class="activity-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Activity Log
+        </div>
+        <span class="activity-subtitle">Latest 20 events</span>
+      </div>
+      <div id="activity"></div>
+    </section>
+
+  </section><!-- /dashboard -->
+</main>
+
+<!-- ═══════════════════ AGENTIC MODAL ═══════════════════ -->
+<dialog id="modal">
+  <form id="accountForm">
+    <div class="modal-header">
+      <h2 id="modalTitle">Add Account</h2>
+      <button type="button" id="x" class="close-btn" aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <input id="editId" type="hidden">
+    <div class="field-group">
+      <label for="email">Email account</label>
+      <input id="email" type="email" placeholder="you@example.com" required>
+    </div>
+    <div class="field-group">
+      <label for="agenticName">Agentic / service name</label>
+      <input id="agenticName" type="text" placeholder="e.g. Codex, Antigravity, Replit" maxlength="80" required>
+    </div>
+    <div class="field-group">
+      <label for="limitDate">Limit last reached</label>
+      <input id="limitDate" type="datetime-local" required>
+    </div>
+    <div class="field-group">
+      <label for="period">Reset period</label>
+      <select id="period">
+        <option value="week">1 week</option>
+        <option value="month">1 month</option>
+        <option value="custom">Custom range</option>
+      </select>
+    </div>
+    <div id="customWrap" class="custom-wrap is-hidden">
+      <div class="field-group">
+        <label>Custom duration</label>
+        <div class="custom-row">
+          <input id="customValue" type="number" min="1" value="1" placeholder="Amount">
+          <select id="customUnit">
+            <option value="days">Days</option>
+            <option value="weeks">Weeks</option>
+            <option value="months">Months</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="cancel" class="btn-ghost">Cancel</button>
+      <button type="submit" class="btn-primary">Save Account</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ═══════════════════ EMAIL SECURITY MODAL ═══════════════════ -->
+<dialog id="emailModal">
+  <form id="emailForm">
+    <div class="modal-header">
+      <h2 id="emailModalTitle">Add Email</h2>
+      <button type="button" id="emailX" class="close-btn" aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <input id="emailEditId" type="hidden">
+
+    <div class="field-group">
+      <label for="emailAddr">Email address</label>
+      <input id="emailAddr" type="email" placeholder="you@example.com" required>
+    </div>
+    <div class="field-group">
+      <label for="emailProvider">Provider / service</label>
+      <input id="emailProvider" type="text" placeholder="e.g. Gmail, Outlook, ProtonMail" maxlength="60">
+    </div>
+    <div class="field-group">
+      <label for="emailNotes">Notes (optional)</label>
+      <input id="emailNotes" type="text" placeholder="e.g. Work email, personal…" maxlength="120">
+    </div>
+
+    <div class="security-section">
+      <div class="security-section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Security & Recovery Options
+      </div>
+
+      <div class="security-grid">
+        <!-- 2FA Methods -->
+        <div class="sec-group-label">Two-Factor Authentication</div>
+        <label class="sec-toggle">
+          <input type="checkbox" id="sec2FA" name="sec2FA">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">
+            <span class="toggle-title">2FA Enabled</span>
+            <span class="toggle-desc">Two-factor authentication is active</span>
+          </span>
+        </label>
+        <label class="sec-toggle">
+          <input type="checkbox" id="secTOTP" name="secTOTP">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">
+            <span class="toggle-title">Authenticator App (TOTP)</span>
+            <span class="toggle-desc">Google Authenticator, Authy, etc.</span>
+          </span>
+        </label>
+        <label class="sec-toggle">
+          <input type="checkbox" id="secSMS" name="secSMS">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">
+            <span class="toggle-title">SMS / Phone 2FA</span>
+            <span class="toggle-desc">OTP sent via text message</span>
+          </span>
+        </label>
+        <label class="sec-toggle">
+          <input type="checkbox" id="secPasskey" name="secPasskey">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">
+            <span class="toggle-title">Passkey / Hardware Key</span>
+            <span class="toggle-desc">FIDO2, YubiKey, or device biometrics</span>
+          </span>
+        </label>
+
+        <!-- Recovery -->
+        <div class="sec-group-label" style="margin-top:12px">Recovery</div>
+        <label class="sec-toggle">
+          <input type="checkbox" id="secRecoveryCodes" name="secRecoveryCodes">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">
+            <span class="toggle-title">Recovery Codes Saved</span>
+            <span class="toggle-desc">Backup codes stored securely</span>
+          </span>
+        </label>
+        <label class="sec-toggle">
+          <input type="checkbox" id="secRecoveryEmail" name="secRecoveryEmail">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">
+            <span class="toggle-title">Recovery Email Set</span>
+            <span class="toggle-desc">Alternate email for account recovery</span>
+          </span>
+        </label>
+        <label class="sec-toggle">
+          <input type="checkbox" id="secRecoveryPhone" name="secRecoveryPhone">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">
+            <span class="toggle-title">Recovery Phone Set</span>
+            <span class="toggle-desc">Backup phone number registered</span>
+          </span>
+        </label>
+
+        <!-- Additional -->
+        <div class="sec-group-label" style="margin-top:12px">Additional Security</div>
+        <label class="sec-toggle">
+          <input type="checkbox" id="secPasswordManager" name="secPasswordManager">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">
+            <span class="toggle-title">Password Manager</span>
+            <span class="toggle-desc">Stored in a password manager</span>
+          </span>
+        </label>
+        <label class="sec-toggle">
+          <input type="checkbox" id="secTrustedDevices" name="secTrustedDevices">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">
+            <span class="toggle-title">Trusted Devices Only</span>
+            <span class="toggle-desc">Login alerts / device management on</span>
+          </span>
+        </label>
+        <label class="sec-toggle">
+          <input type="checkbox" id="secBreachAlerts" name="secBreachAlerts">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">
+            <span class="toggle-title">Breach Monitoring</span>
+            <span class="toggle-desc">Monitored for data breach alerts</span>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" id="emailCancel" class="btn-ghost">Cancel</button>
+      <button type="submit" class="btn-primary">Save Email</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
