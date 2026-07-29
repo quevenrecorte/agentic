@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════
-   AGENTIC USAGE MONITOR v2.0
+   AGENTIC USAGE MONITOR v2.1
    Modules: Firebase Auth + Realtime DB
-   Features: Agentic cooldown tracking + Email security
+   Features: Agentic cooldown tracking + Email security + Using state
    ═══════════════════════════════════════════════════════ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
@@ -116,22 +116,49 @@ function secBadgeHTML(id, label, icon, active) {
 function render() {
   const n = Date.now();
   const all = Object.entries(accounts).sort(([, a], [, b]) => reset(a) - reset(b));
-  const totalReady = all.filter(([, a]) => n >= reset(a)).length;
+  const totalUsing   = all.filter(([, a]) => a.using === true).length;
+  const totalReady   = all.filter(([, a]) => n >= reset(a) && !a.using).length;
+  const totalWaiting = all.length - totalReady - totalUsing;
   const q = ($("search")?.value || "").toLowerCase().trim();
   const sf = $("statusFilter")?.value || "all";
   const af = $("appFilter")?.value || "all";
 
   const filtered = all.filter(([, a]) => {
     const ok = n >= reset(a), service = a.agenticName || "Unspecified";
+    const isUsing = a.using === true;
     return (!q || a.email.toLowerCase().includes(q) || service.toLowerCase().includes(q))
-      && (sf === "all" || (sf === "ready" && ok) || (sf === "cooldown" && !ok))
+      && (sf === "all"
+          || (sf === "ready"   && ok && !isUsing)
+          || (sf === "using"   && isUsing)
+          || (sf === "cooldown" && !ok))
       && (af === "all" || service === af);
   });
 
   $("list").innerHTML = filtered.length
     ? filtered.map(([id, a]) => {
-        const t = reset(a), ok = n >= t;
-        return `<article class="card ${ok ? "is-ready" : "is-wait"}">
+        const t = reset(a), ok = n >= t, isUsing = a.using === true;
+        const cardClass = isUsing ? "is-using" : (ok ? "is-ready" : "is-wait");
+
+        const badgeHTML = isUsing
+          ? `<span class="badge using">USING</span>`
+          : ok
+            ? `<span class="badge ok">READY</span>`
+            : `<span class="badge wait">COOLDOWN</span>`;
+
+        const countDisplay = isUsing
+          ? `<span class="count" style="color:var(--using)">In Use</span>`
+          : `<span class="count">${countdown(t - n)}</span>`;
+
+        const actionBtn = isUsing
+          ? `<button class="btn-using btn-sm" data-stop="${id}">
+               <svg class="spin-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+               Using
+             </button>`
+          : ok
+            ? `<button class="btn-start btn-sm" data-start="${id}">Start</button>`
+            : `<button class="btn-used btn-sm" data-used="${id}">Used</button>`;
+
+        return `<article class="card ${cardClass}">
           <div class="identity">
             <div class="email">${esc(a.email)}</div>
             <span class="service-tag">${esc(a.agenticName || "Unspecified")}</span>
@@ -139,13 +166,13 @@ function render() {
           </div>
           <div class="usage">
             <div class="count-line">
-              <span class="count">${countdown(t - n)}</span>
-              <span class="badge ${ok ? "ok" : "wait"}">${ok ? "READY" : "COOLDOWN"}</span>
+              ${countDisplay}
+              ${badgeHTML}
             </div>
             <div class="reset-text">Resets ${fmt(t)}</div>
           </div>
           <div class="card-actions">
-            <button class="btn-used btn-sm" data-used="${id}">Used</button>
+            ${actionBtn}
             <button class="btn-edit btn-sm" data-edit="${id}">Edit</button>
             <button class="btn-delete btn-sm" data-delete="${id}">Delete</button>
           </div>
@@ -156,9 +183,10 @@ function render() {
         <p>No accounts match your filters.</p>
       </div>`;
 
-  $("total").textContent = all.length;
-  $("ready").textContent = totalReady;
-  $("waiting").textContent = all.length - totalReady;
+  $("total").textContent      = all.length;
+  $("ready").textContent      = totalReady;
+  $("usingCount").textContent = totalUsing;
+  $("waiting").textContent    = totalWaiting;
   $("tabCountAgentic").textContent = all.length;
   $("filterCount").textContent = filtered.length < all.length ? `Showing ${filtered.length} of ${all.length} accounts` : "";
   applyPrivacy();
@@ -375,14 +403,38 @@ $("cancel").onclick = $("x").onclick = () => $("modal").close();
 $("period").onchange = () => $("customWrap").classList.toggle("is-hidden", $("period").value !== "custom");
 
 $("list").onclick = async e => {
-  const usedId = e.target.dataset.used;
+  const btn = e.target.closest("button");
+  if (!btn) return;
+
+  // ── Start using ──
+  const startId = btn.dataset.start;
+  if (startId) {
+    const a = accounts[startId];
+    await update(ref(db, `users/${user.uid}/accounts/${startId}`), { using: true, usingStarted: serverTimestamp(), updatedAt: serverTimestamp() });
+    await log(`Started using ${a.email} (${a.agenticName || "Unspecified"}).`);
+    return;
+  }
+
+  // ── Stop using → mark as used ──
+  const stopId = btn.dataset.stop;
+  if (stopId) {
+    const a = accounts[stopId];
+    await update(ref(db, `users/${user.uid}/accounts/${stopId}`), { using: false, usingStarted: null, limitDate: localDT(), updatedAt: serverTimestamp() });
+    await log(`Finished using ${a.email} (${a.agenticName || "Unspecified"}) – marked as used.`);
+    return;
+  }
+
+  // ── Used (cooldown state) ──
+  const usedId = btn.dataset.used;
   if (usedId) {
     const a = accounts[usedId];
     await update(ref(db, `users/${user.uid}/accounts/${usedId}`), { limitDate: localDT(), updatedAt: serverTimestamp() });
     await log(`Marked ${a.email} (${a.agenticName || "Unspecified"}) as fully used.`);
     return;
   }
-  const editId = e.target.dataset.edit;
+
+  // ── Edit ──
+  const editId = btn.dataset.edit;
   if (editId) {
     const a = accounts[editId];
     $("editId").value = editId;
@@ -397,7 +449,9 @@ $("list").onclick = async e => {
     $("modal").showModal();
     return;
   }
-  const delId = e.target.dataset.delete;
+
+  // ── Delete ──
+  const delId = btn.dataset.delete;
   if (delId && confirm("Delete this agentic account?")) {
     const a = accounts[delId];
     await remove(ref(db, `users/${user.uid}/accounts/${delId}`));
