@@ -5,23 +5,23 @@
    ═══════════════════════════════════════════════════════ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { getDatabase, ref, push, set, update, remove, onValue, serverTimestamp, query, limitToLast } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 /* ── Firebase Config ── */
 const firebaseConfig = {
-  apiKey: "AIzaSyA4aHl9xv_v3fFPfgQ10-T_ifJ00Frni8Y",
-  authDomain: "main-128f7.firebaseapp.com",
-  databaseURL: "https://main-128f7-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "main-128f7",
-  storageBucket: "main-128f7.firebasestorage.app",
-  messagingSenderId: "50099445496",
-  appId: "1:50099445496:web:382017fc1daea3ec86a50d",
-  measurementId: "G-6ET6VBK9L0"
+  apiKey: "AIzaSyBd3lY0BYzLE1iGjZMpcYBqOamfQIn50D4",
+  authDomain: "agenticmonitor-a6f1b.firebaseapp.com",
+  databaseURL: "https://agenticmonitor-a6f1b-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "agenticmonitor-a6f1b",
+  storageBucket: "agenticmonitor-a6f1b.firebasestorage.app",
+  messagingSenderId: "610128369889",
+  appId: "1:610128369889:web:d692995a6e2574bad0bfa0"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
 const db = getDatabase(app);
 const $ = x => document.getElementById(x);
 
@@ -352,12 +352,23 @@ onAuthStateChanged(auth, u => {
 /* ── Auth Forms ── */
 $("loginForm").onsubmit = async e => {
   e.preventDefault();
+  $("msg").textContent = "";
   try { await signInWithEmailAndPassword(auth, $("loginEmail").value, $("loginPassword").value); }
   catch { $("msg").textContent = "Sign in failed. Check your credentials."; }
 };
 $("register").onclick = async () => {
+  $("msg").textContent = "";
   try { await createUserWithEmailAndPassword(auth, $("loginEmail").value, $("loginPassword").value); }
   catch (err) { $("msg").textContent = err.message || "Registration failed."; }
+};
+$("googleSignInBtn").onclick = async () => {
+  $("msg").textContent = "";
+  try { await signInWithPopup(auth, googleProvider); }
+  catch (err) {
+    if (err.code !== "auth/popup-closed-by-user") {
+      $("msg").textContent = err.message || "Google sign in failed.";
+    }
+  }
 };
 $("logout").onclick = () => signOut(auth);
 
